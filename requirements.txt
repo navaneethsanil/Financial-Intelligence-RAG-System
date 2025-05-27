@@ -1,0 +1,14 @@
+langchain
+langchain-community
+langchain_core
+langchain-pinecone
+langchain-openai
+fastapi
+uvicorn
+yfinance
+mysql-connector-python
+python-dotenv
+pandas
+python-multipart
+pdfminer.six
+black
