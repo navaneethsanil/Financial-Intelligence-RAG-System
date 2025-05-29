@@ -6,18 +6,14 @@ class Settings(BaseSettings):
     APP_NAME: str = "Financial-Intelligence-Rag-System"
     DEBUG: bool = False
 
+    # API Keys
+    MISTRAL_API_KEY: str
+
     # Database configuration
     DB_HOST: str
     DB_USER: str
     DB_PASS: str
-
-    # Pinecone configuration
-    PINECONE_API_KEY: str
-    PINECONE_ENVIRONMENT: str
-    INDEX_NAME: str
-
-    # OpenAI configuration
-    OPENAI_API_KEY: str
+    MYSQL_URI: str
 
     class Config:
         """

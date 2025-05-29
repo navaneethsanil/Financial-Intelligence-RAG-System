@@ -1,8 +1,8 @@
 langchain
 langchain-community
 langchain_core
-langchain-pinecone
-langchain-openai
+langchain-huggingface
+langgraph
 fastapi
 uvicorn
 yfinance
@@ -12,3 +12,9 @@ pandas
 python-multipart
 pdfminer.six
 black
+faiss-cpu
+sentence-transformers
+sqlalchemy
+pymysql
+accelerate
+langchain_mistralai

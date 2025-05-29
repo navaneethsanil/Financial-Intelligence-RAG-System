@@ -1,24 +1,24 @@
 import os
 from fastapi import UploadFile
-from langchain_community.document_loaders import TextLoader, PDFMinerLoader
-from langchain_openai import OpenAIEmbeddings
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from app.db.pinecone_db import init_pinecone
-from app.schemas import document_upload_schema
 from dotenv import load_dotenv
+from langchain_community.document_loaders import TextLoader, PDFMinerLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
 
-# Load environment variables from the .env file
+# Load environment variables
 load_dotenv(override=True)
 
-# Initialize Pinecone vector store and OpenAI embeddings
-vector_store = init_pinecone()
-embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
-index_name = os.getenv("INDEX_NAME")
+# Initialize Hugging Face embeddings
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
+# Path to store FAISS index
+faiss_index_path = "vectorstore/faiss_index"
 
 
 def upload_document(file: UploadFile) -> dict:
     """
-    Handles the upload, parsing, chunking, embedding, and storage of a document into a Pinecone vector store.
+    Handles the upload, parsing, chunking, embedding, and storage of a document into a FAISS vector store.
 
     Args:
         file (UploadFile): The file uploaded by the client (supports .txt and .pdf formats).
@@ -26,18 +26,17 @@ def upload_document(file: UploadFile) -> dict:
     Returns:
         dict: A response message indicating the outcome of the upload process.
     """
-    # Define the directory and create it if it doesn't exist
+    # Ensure directories exist
     dir_path = "data/sample_docs"
     os.makedirs(dir_path, exist_ok=True)
+    os.makedirs("vectorstore", exist_ok=True)
 
-    # Define the path where the uploaded file will be saved
-    file_path = f"data/sample_docs/{file.filename}"
-
-    # Save the uploaded file to disk
+    # Save the uploaded file
+    file_path = os.path.join(dir_path, file.filename)
     with open(file_path, "wb") as f:
         f.write(file.file.read())
 
-    # Choose the appropriate loader based on file extension
+    # Choose the appropriate loader
     if file.filename.endswith(".txt"):
         loader = TextLoader(file_path, encoding="utf-8", autodetect_encoding=True)
     elif file.filename.endswith(".pdf"):
@@ -45,14 +44,21 @@ def upload_document(file: UploadFile) -> dict:
     else:
         return {"message": "Unsupported file type"}
 
-    # Load documents using the selected loader
+    # Load and split the document
     documents = loader.load()
-
-    # Split documents into smaller chunks for embedding
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
     docs = splitter.split_documents(documents)
 
-    # Add the document chunks to the Pinecone vector store
-    vector_store.add_documents(documents=docs, index_name=index_name)
+    # Load existing FAISS index or create a new one
+    if os.path.exists(faiss_index_path):
+        faiss_store = FAISS.load_local(
+            faiss_index_path, embeddings, allow_dangerous_deserialization=True
+        )
+        faiss_store.add_documents(docs)
+    else:
+        faiss_store = FAISS.from_documents(docs, embeddings)
 
-    return {"message": "Document uploaded to Pinecone successfully"}
+    # Save the updated FAISS index
+    faiss_store.save_local(faiss_index_path)
+
+    return {"message": "Document uploaded and indexed with FAISS successfully"}
