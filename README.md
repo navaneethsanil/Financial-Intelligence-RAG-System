@@ -39,6 +39,17 @@ DB_USER=ROOT
 DB_PASS=PASSWORD
 DB_NAME=DATABASE_NAME
 
+After creating a MySQL database, use the following SQL syntax to create a table
+CREATE TABLE IF NOT EXISTS stock_data (
+            symbol VARCHAR(10),
+            timestamp DATETIME,
+            price FLOAT,
+            ma_20 FLOAT,
+            rsi FLOAT,
+            volatility FLOAT,
+            PRIMARY KEY (symbol, timestamp)
+        )
+
 # For LangChain SQL Agent
 MYSQL_URI=mysql+pymysql://root:PASSWORD@localhost:3306/DATABASE_NAME
 ```
