@@ -46,18 +46,18 @@ MYSQL_URI=mysql+pymysql://root:PASSWORD@localhost:3306/DATABASE_NAME
 ## Setup Instructions
 
 # 1. Clone the repo
-git clone https://github.com/navaneethsanil/Financial-Intelligence-RAG-System.git
+```git clone https://github.com/navaneethsanil/Financial-Intelligence-RAG-System.git
 cd financial-intelligence-rag
-
+```
 # 2. Set up a virtual environment
-python -m venv env
+```python -m venv env
 source env/scripts/activate
-
+```
 # 3. Install dependencies
-pip install -r requirements.txt
+```pip install -r requirements.txt```
 
 # 4. Run the FastAPI server
-uvicorn app.main:app --host localhost --port 8000 --reload
+```uvicorn app.main:app --host localhost --port 8000 --reload```
 
 # After running the fastapi server, you can test the api by downloading postman locally
 
