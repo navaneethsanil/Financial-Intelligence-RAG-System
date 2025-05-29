@@ -82,3 +82,14 @@ body - raw - json
 {
     "query": "What is Apple's current stock performance compared to their latest earnings guidance?"
 }
+
+example queries:
+1. What is Apple’s stock performance compared to its latest earnings guidance?
+
+2. How has Alphabet's (GOOGL) advertising revenue trended over the past four quarters?
+
+3. Did Tesla meet or miss its earnings expectations in the most recent quarter?
+
+4. What are the recent price movements and key events affecting Bitcoin (BTC-USD)?
+
+5. How has Ethereum's (ETH-USD) market cap and trading volume changed in the last month?
